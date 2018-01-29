@@ -298,28 +298,25 @@
                     <div class="panel-body">
                       <select class="form-control">
                         <optgroup label="No Armor">
-                          <option value="0">Naked</option>
-                          <option value="0">Cloth</option>
-                          <option value="0">Robe</option>
+                          <option value="1" data-recovery-penalty="0">Naked</option>
+                          <option value="1" data-recovery-penalty="0">Cloth</option>
+                          <option value="1" data-recovery-penalty="0">Robe</option>
                         </optgroup>
                         <optgroup label="Light Armor">
-                          <option value="0.20">Padded</option>
-                          <option value="0.20">Hide</option>
-                          <option value="0.20">Leather</option>
+                          <option value="0.833" data-recovery-penalty="0.20">Padded</option>
+                          <option value="0.833" data-recovery-penalty="0.20">Hide</option>
+                          <option value="0.833" data-recovery-penalty="0.20">Leather</option>
                         </optgroup>
                         <optgroup label="Medium Armor">
-                          <option value="0.35">Scale</option>
-                          <option value="0.35">Breastplate</option>
-                          <option value="0.35">Mail</option>
+                          <option value="0.741" data-recovery-penalty="0.35">Scale</option>
+                          <option value="0.741" data-recovery-penalty="0.35">Breastplate</option>
+                          <option value="0.741" data-recovery-penalty="0.35">Mail</option>
                         </optgroup>
                         <optgroup label="Heavy Armor">
-                          <option value="0.55">Brigandine</option>
-                          <option value="0.55">Plate</option>
+                          <option value="0.645" data-recovery-penalty="0.35">Brigandine</option>
+                          <option value="0.645" data-recovery-penalty="0.35">Plate</option>
                         </optgroup>
                       </select>
-                      <div class="checkbox hidden">
-                        <label><input type="checkbox" class="property" data-prop="durganized"> Is Durganized</label>
-                      </div>
                       <div class="checkbox">
                         <label><input type="checkbox" class="property" data-prop="armored_grace"> Armored Grace</label>
                       </div>
@@ -347,9 +344,6 @@
                     <div class="panel-heading">Mainhand</div>
                     <div class="panel-body">
                       <select class="form-control" id="mainhand-select"></select>
-                      <div class="checkbox hidden" data-prop="durganized">
-                        <label><input type="checkbox" class="property" data-prop="durganized"> Is Durganized</label>
-                      </div>
                       <div class="checkbox hidden" data-prop="speed">
                         <label><input type="checkbox" class="property" data-prop="speed"> Has Speed <span class="text-muted">(enchant)</span></label>
                       </div>
@@ -361,9 +355,6 @@
                     <div class="panel-heading">Offhand</div>
                     <div class="panel-body">
                       <select class="form-control" id="offhand-select"></select>
-                      <div class="checkbox invisible hidden" data-prop="durganized">
-                        <label><input type="checkbox" class="property" data-prop="durganized"> Is Durganized</label>
-                      </div>
                       <div class="checkbox invisible hidden" data-prop="speed">
                         <label><input type="checkbox" class="property" data-prop="speed"> Has Speed <span class="text-muted">(enchant)</span></label>
                       </div>
@@ -566,8 +557,12 @@
         reloadSpeedCoef1: 'ReloadSpeedCoef1'
       };
       
+      var CURRENT_STEP_MULT_SUM = {
+        mh: 0,
+        oh: 0
+      };
       var CURRENT_DEX = 10;
-      var ARMOR_PENALTY = 0;
+      var ARMOR_SPEED_COEF = 0;
       var RESULTS_PER_BLOCK = {};
       var PREVENT_RESULTS_BLINKING = false;
       var EFFECT_COEFFICIENTS = {
@@ -576,30 +571,41 @@
       };
       
       var EFFECTS = [
-        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.20, "Bloodlust"),
-        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 0.80, "Cautious Attack"),
-        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.50, "DAoM Potion", SUPPRESING_CATEGORIES.attackSpeedMult1),
-        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.33, "Frenzy", SUPPRESING_CATEGORIES.attackSpeedMult1),
-        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.25, "Hastening Exhortation", SUPPRESING_CATEGORIES.attackSpeedMult1),
-        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.20, "Nature's Bounty", SUPPRESING_CATEGORIES.attackSpeedMult1),
-        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.25, "Potion of Power", SUPPRESING_CATEGORIES.attackSpeedMult1),
-        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.15, "Svef", SUPPRESING_CATEGORIES.attackSpeedMult1),
-        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.20, "Swift Aim", SUPPRESING_CATEGORIES.attackSpeedMult1, null, true),
-        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.25, "Swift Strikes", SUPPRESING_CATEGORIES.attackSpeedMult1),
+        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.20, "Bloodlust"), 
+        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.25, "Frenzy", SUPPRESING_CATEGORIES.attackSpeedMult1),
+        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.20, "Coral Snuff", SUPPRESING_CATEGORIES.attackSpeedMult1),
+        // GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.20, "Swift Aim", SUPPRESING_CATEGORIES.attackSpeedMult1, null, true),
+        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.25, "Potion of Deftness", SUPPRESING_CATEGORIES.attackSpeedMult1),  
+        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.50, "Potion of Relentless Striking", SUPPRESING_CATEGORIES.attackSpeedMult1),        
+        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.20, "Swift Strikes", SUPPRESING_CATEGORIES.attackSpeedMult1),
         GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.40, "Their Champion Chant", SUPPRESING_CATEGORIES.attackSpeedMult1),
-        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.50, "Time Parasite", SUPPRESING_CATEGORIES.attackSpeedMult1),
-        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.20, "Vielo Vidorio", SUPPRESING_CATEGORIES.attackSpeedMult1),
+        // GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.50, "Time Parasite", SUPPRESING_CATEGORIES.attackSpeedMult1),
+        // GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.20, "Vielo Vidorio", SUPPRESING_CATEGORIES.attackSpeedMult1),
         
-        GenEffect(EFFECT_CATEGORIES.dualWieldAttackSpeedMult, 1.20, "Two-Weapon Style"), 
-        GenEffect(EFFECT_CATEGORIES.meleeAttackSpeedMult, 0.80, "Vulnerable Attack"), 
-        GenEffect(EFFECT_CATEGORIES.rangedAttackSpeedMult, 0.80, "Penetrating Shot"),        
-        GenEffect(EFFECT_CATEGORIES.rateOfFireMult, 1.20, "Sure-Handed Chant", null, null, true),
-        GenEffect(EFFECT_CATEGORIES.rateOfFireMult, 0.80, "Vicious Aim", null, null, true),
-        
-        GenEffect(EFFECT_CATEGORIES.reloadSpeedCoef, 1.20, "Gunner"),
-        GenEffect(EFFECT_CATEGORIES.reloadSpeedCoef, 1.20, "Sure-Handed Chant", SUPPRESING_CATEGORIES.reloadSpeedCoef1, null, true),
-        GenEffect(EFFECT_CATEGORIES.reloadSpeedCoef, 1.50, "Swift Aim", SUPPRESING_CATEGORIES.reloadSpeedCoef1, null, true),
-        GenEffect(EFFECT_CATEGORIES.reloadSpeedCoef, 0.80, "Vicious Aim", null, null, true)
+        // Bleeding Cut: +100% Recovery Time with Battle Axes
+        // Piercing Blows: +100% Recovery Time with Battle Axes
+        // Windmill Slash: +100% Recovery Time with Sabres
+        // Vulnerable Thrust: +100% Recovery Time with Rapiers
+        // Defensive Strike: +100% Recovery Time with Quarterstaves
+        // Blast: +50% Recovery Time with Rods
+        // 
+        // Rapid Shot: -50% Recovery Time with Hunting Bow
+        // Overdraw: +100% Recovery Time with War Bow
+        // 
+        // Interrupting Shot: -50% Action Speed with Crossbow - no visual change
+        // Overbearing Shot: -50% Action Speed with Arbalests - visual: attack and reload cut in half
+        // Rushed Reload: +100% Reload Speed with Pistols - no visual change
+         
+//        GenEffect(EFFECT_CATEGORIES.dualWieldAttackSpeedMult, 1.20, "Two-Weapon Style"), 
+//        GenEffect(EFFECT_CATEGORIES.meleeAttackSpeedMult, 0.80, "Vulnerable Attack"), 
+//        GenEffect(EFFECT_CATEGORIES.rangedAttackSpeedMult, 0.80, "Penetrating Shot"),        
+//        GenEffect(EFFECT_CATEGORIES.rateOfFireMult, 1.20, "Sure-Handed Chant", null, null, true),
+//        GenEffect(EFFECT_CATEGORIES.rateOfFireMult, 0.80, "Vicious Aim", null, null, true),
+//        
+//        GenEffect(EFFECT_CATEGORIES.reloadSpeedCoef, 1.20, "Gunner"),
+//        GenEffect(EFFECT_CATEGORIES.reloadSpeedCoef, 1.20, "Sure-Handed Chant", SUPPRESING_CATEGORIES.reloadSpeedCoef1, null, true),
+//        GenEffect(EFFECT_CATEGORIES.reloadSpeedCoef, 1.50, "Swift Aim", SUPPRESING_CATEGORIES.reloadSpeedCoef1, null, true),
+//        GenEffect(EFFECT_CATEGORIES.reloadSpeedCoef, 0.80, "Vicious Aim", null, null, true)
       ];
       
       var GLOVES_EFFECTS = {
@@ -614,9 +620,6 @@
         document.addEventListener('DOMContentLoaded', function() {
           InitOnReady();
         });
-        
-        // document.readyState === "complete" ? InitOnReady()
-        //                                    : $(document).ready(function(){InitOnReady();});
       }
 
       function InitOnReady()
@@ -750,10 +753,8 @@
         MH_WIELDABLE = GetWieldableById(wieldableId);
         
         var $container = GetMainhandCol();
-        var $checkboxDurganized = $container.find('.checkbox[data-prop="durganized"]');
         var $checkboxSpeed = $container.find('.checkbox[data-prop="speed"]');
-        
-        $checkboxDurganized.toggleClass('invisible', !WieldableCanBeDurganized(MH_WIELDABLE));        
+               
         $checkboxSpeed.toggleClass('invisible', !WieldableCanHaveSpeed(MH_WIELDABLE));
         
         // adjust fist options:
@@ -776,10 +777,8 @@
         OH_WIELDABLE = GetWieldableById(wieldableId);
         
         var $container = GetOffhandCol();
-        var $checkboxDurganized = $container.find('.checkbox[data-prop="durganized"]');
         var $checkboxSpeed = $container.find('.checkbox[data-prop="speed"]');
-        
-        $checkboxDurganized.toggleClass('invisible', !WieldableCanBeDurganized(OH_WIELDABLE));        
+                
         $checkboxSpeed.toggleClass('invisible', !WieldableCanHaveSpeed(OH_WIELDABLE));
         
         // adjust fist options:
@@ -1072,11 +1071,11 @@
         $block.find('.oh-attack').width(GetPercStr(ohAttack / maxDuration));
         $block.find('.oh-recovery').width(GetPercStr(ohRecovery / maxDuration));
         
-        $block.find('.mh-attack-result .value').html(GetRoundedValue(mhAttack) + 'f');
-        $block.find('.mh-recovery-result .value').html(GetRoundedValue(mhRecovery) + 'f');
-        $block.find('.mh-reload-result .value').html(GetRoundedValue(mhReload) + 'f');
-        $block.find('.oh-attack-result .value').html(GetRoundedValue(ohAttack) + 'f');
-        $block.find('.oh-recovery-result .value').html(GetRoundedValue(ohRecovery) + 'f');
+        $block.find('.mh-attack-result .value').html(GetDisplayedPhaseDuration(mhAttack));
+        $block.find('.mh-recovery-result .value').html(GetDisplayedPhaseDuration(mhRecovery));
+        $block.find('.mh-reload-result .value').html(GetDisplayedPhaseDuration(mhReload));
+        $block.find('.oh-attack-result .value').html(GetDisplayedPhaseDuration(ohAttack));
+        $block.find('.oh-recovery-result .value').html(GetDisplayedPhaseDuration(ohRecovery));
         
         $block.find('.mh-reload-result').toggleClass('hidden', mhReload <= 0);
         $block.find('.oh-delay').toggleClass('hidden', !IS_OFFHAND_ATTACKING);
@@ -1235,7 +1234,7 @@
       function UpdateResults()
       {
         UpdateEffectCoefficients();
-        UpdateArmorPenaltyValue();
+        UpdateArmorSpeedCoef();
         
         var baseValues = ComputeBaseValues();
         var finalValues = ComputeFinalValues(baseValues);
@@ -1247,20 +1246,16 @@
         PREVENT_RESULTS_BLINKING = false;
       }
       
-      function UpdateArmorPenaltyValue()
+      function UpdateArmorSpeedCoef()
       {
         var $container = $('#armor-col');        
-        var isDurganized = $container.find('.property[data-prop="durganized"]').is(':checked');
         var withArmoredGrace = $container.find('.property[data-prop="armored_grace"]').is(':checked');
-        var withPilfererGloves = $('#gloves-col select').val() == 'pilferer';
         
-        var penalty = $container.find("select").val();
-        var foo = isDurganized ? 0.15 : 0;
-            foo = foo == 0 && withPilfererGloves ? 0.10 : foo; // pilferer can be surppressed
-        var bar = withArmoredGrace ? 0.20 : 0;
+        var speedCoef = $container.find("select").val();
+            speedCoef+= withArmoredGrace ? 0.20 : 0;
         
-        ARMOR_PENALTY = Math.max(0, penalty - foo - bar);
-        return ARMOR_PENALTY;
+        ARMOR_SPEED_COEF = Math.min(1, speedCoef);
+        return ARMOR_SPEED_COEF;
       }
       
       /* ******************************************************************** */
@@ -1268,11 +1263,11 @@
       function ComputeBaseValues()
       {
         var values = [];
-        var recoveryFactor = 0.35; // 1.2
+        var recoveryFactor = 7/30;
         
         if (MH_WIELDABLE != null)
         {
-          var mhRecovery = Math.round(100 * MH_WIELDABLE.attackDuration / (recoveryFactor / 2)) / 100;
+          var mhRecovery = Math.round(100 * MH_WIELDABLE.attackDuration / recoveryFactor) / 100;
               mhRecovery/= IS_DW_SETUP ? 2 : 1; 
           
           values.mh = {
@@ -1284,7 +1279,7 @@
         
         if (IS_OFFHAND_ATTACKING)
         {
-          var ohRecovery = Math.round(100 * OH_WIELDABLE.attackDuration / (recoveryFactor / 2) / 2) / 100;
+          var ohRecovery = Math.round(100 * OH_WIELDABLE.attackDuration / recoveryFactor / 2) / 100;
           
           values.oh = {
             attack: OH_WIELDABLE.attackDuration,
@@ -1310,19 +1305,19 @@
         var speedCoefMH = ComputeMainhandSpeedCoef();
         var speedCoefOH = ComputeOffhandSpeedCoef();
         
-        var recoveryFactor = 0.35; // 1.2 in PoE1
-        var recoveryCoefMH = Math.max(0, 1 - 2 * speedCoefMH) / recoveryFactor;
-        var recoveryCoefOH = Math.max(0, 1 - 2 * speedCoefOH) / recoveryFactor;
+        var recoveryFactor = 7/30;
+        var recoveryCoefMH = 1 / speedCoefMH / recoveryFactor;
+        var recoveryCoefOH = 1 / speedCoefOH / recoveryFactor;
                 
         if (values.mh && values.mh.attack)
         {
-          values.mh.attack/= dexCoef;
+          //values.mh.attack/= dexCoef;
           values.mh.recovery = values.mh.attack * recoveryCoefMH;
         }
         
         if (values.oh && values.oh.attack)
         {
-          values.oh.attack/= dexCoef;
+          //values.oh.attack/= dexCoef;
           values.oh.recovery = values.oh.attack * recoveryCoefOH;
         }
         
@@ -1334,41 +1329,27 @@
         if (MH_WIELDABLE == null)
           return 0;
         
+        var hand = 'mh';        
         var speedCoef = 0;
         var cats = EFFECT_CATEGORIES;
         var coefs = WieldableIsRanged(MH_WIELDABLE) ? EFFECT_COEFFICIENTS.ranged
                                                     : EFFECT_COEFFICIENTS.melee;
         var coefficients = jQuery.extend(true, {}, coefs);
         
-        var $container = GetMainhandCol();
-        var durganizedCheckboxChecked = $container.find('.property[data-prop="durganized"]').is(':checked');
-        var speedCheckboxChecked = $container.find('.property[data-prop="speed"]').is(':checked');
+        // var $container = GetMainhandCol();
+        // var speedCheckboxChecked = $container.find('.property[data-prop="speed"]').is(':checked');        
+        // var hasSpeed = speedCheckboxChecked && WieldableCanHaveSpeed(MH_WIELDABLE);
         
-        var isDurganized = durganizedCheckboxChecked && WieldableCanBeDurganized(MH_WIELDABLE);
-        var hasSpeed = speedCheckboxChecked && WieldableCanHaveSpeed(MH_WIELDABLE);
-        
+        ResetFinalMultiplier(hand);
         for (var category in coefficients)
         {
-          if (!IsMultiplicativeRecoveryCategory(category))
-            continue;
-          
-          var coef = coefficients[category];
-
-          if (category == cats.attackSpeedMult && isDurganized)
-            coef*= 1.15;
-
-          if (category == cats.attackSpeedMult && hasSpeed)
-            coef*= 1.20;
-
-          speedCoef+= coef - 1;          
+          AddStepMultiplier(hand, coefficients[category]);         
         }
         
-        if (!IS_DW_SETUP)
-        {
-          speedCoef-= HasDurganizedShieldInOffhand() ? 0.35 : 0.5;
-        }
+        AddStepMultiplier(hand, ARMOR_SPEED_COEF);
+        AddStepMultiplier(hand, GetDexCoef(CURRENT_DEX));
         
-        return speedCoef - ARMOR_PENALTY;
+        return GetFinalMultiplier(hand);
       }
       
       function ComputeOffhandSpeedCoef()
@@ -1376,36 +1357,27 @@
         if (OH_WIELDABLE == null)
           return 0;
         
+        var hand = 'oh';
         var speedCoef = 0;
         var cats = EFFECT_CATEGORIES;
         var coefs = WieldableIsRanged(OH_WIELDABLE) ? EFFECT_COEFFICIENTS.ranged
                                                     : EFFECT_COEFFICIENTS.melee;
         var coefficients = jQuery.extend(true, {}, coefs);
         
-        var $container = GetOffhandCol();
-        var durganizedCheckboxChecked = $container.find('.property[data-prop="durganized"]').is(':checked');
-        var speedCheckboxChecked = $container.find('.property[data-prop="speed"]').is(':checked');
+        // var $container = GetOffhandCol();
+        // var speedCheckboxChecked = $container.find('.property[data-prop="speed"]').is(':checked');        
+        // var hasSpeed = speedCheckboxChecked && WieldableCanHaveSpeed(OH_WIELDABLE);
         
-        var isDurganized = durganizedCheckboxChecked && WieldableCanBeDurganized(OH_WIELDABLE);
-        var hasSpeed = speedCheckboxChecked && WieldableCanHaveSpeed(OH_WIELDABLE);
-        
+        ResetFinalMultiplier(hand);
         for (var category in coefficients)
         {
-          if (!IsMultiplicativeRecoveryCategory(category))
-            continue;
-          
-          var coef = coefficients[category];
-
-          if (category == cats.attackSpeedMult && isDurganized && OH_WIELDABLE.category != WIELDABLE_CATEGORIES.shields)
-            coef*= 1.15;
-
-          if (category == cats.attackSpeedMult && hasSpeed && OH_WIELDABLE.category != WIELDABLE_CATEGORIES.shields)
-            coef*= 1.20;
-
-          speedCoef+= coef - 1;
+          AddStepMultiplier(hand, coefficients[category]);         
         }
         
-        return speedCoef - ARMOR_PENALTY;
+        AddStepMultiplier(hand, ARMOR_SPEED_COEF);
+        AddStepMultiplier(hand, GetDexCoef(CURRENT_DEX));
+        
+        return GetFinalMultiplier(hand);
       }
       
       /* ****************************** UTILS ******************************* */
@@ -1461,23 +1433,7 @@
           EFFECT_CATEGORIES.rateOfFireMult
         ]) >= 0;
       }
-      
-      function HasDurganizedShieldInOffhand()
-      {
-        if (OH_WIELDABLE == null || OH_WIELDABLE.category != WIELDABLE_CATEGORIES.shields)
-          return false;
-        
-        var $container = GetOffhandCol();
-        return $container.find('.property[data-prop="durganized"]').is(':checked');
-      }
-      
-      function WieldableCanBeDurganized(wieldable)
-      {
-        return wieldable != null && !WieldableIsFist(wieldable) && $.inArray(wieldable.category, [
-          WIELDABLE_CATEGORIES.emptyHand
-        ]) < 0;
-      }
-      
+            
       function WieldableCanHaveSpeed(wieldable)
       {
         return wieldable != null && !WieldableIsFist(wieldable) && $.inArray(wieldable.category, [
@@ -1495,7 +1451,12 @@
       {
         return Math.round(floatVal * 10) / 10;
       }
-            
+      
+      function GetDisplayedPhaseDuration(frames)
+      {
+        return GetRoundedValue(frames) + 'f' + ' (' + GetRoundedValue(frames/30) + 's)';
+      }
+      
       function MultArrayValues(arr)
       {
         var foo = 1;
@@ -1504,6 +1465,29 @@
           foo*= arr[i];
         
         return foo;
+      }
+      
+      /* ******************************************************************** */
+      
+      function AddStepMultiplier(hand, multCoef)
+      {         
+        CURRENT_STEP_MULT_SUM[hand]+= GetStepMultiplier(multCoef);
+      }
+      
+      function GetStepMultiplier(multCoef)
+      {
+        return multCoef >= 1 ? multCoef - 1 : 1 - 1 / multCoef;
+      }
+      
+      function GetFinalMultiplier(hand)
+      {
+        var sum = CURRENT_STEP_MULT_SUM[hand];
+        return sum >= 0 ? sum + 1 : 1 / (1 - sum);
+      }
+      
+      function ResetFinalMultiplier(hand)
+      {
+        CURRENT_STEP_MULT_SUM[hand] = 0;
       }
       
       /* ******************************************************************** */
