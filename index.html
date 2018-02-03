@@ -278,13 +278,13 @@
     <div class="navbar navbar-default">
       <div class="container">
         <div class="navbar-header">
-          <span class="navbar-brand">Pillars of Eternity</span>
-          <span class="navbar-brand">Deadfire</span>
+          <a class="navbar-brand nav-link" href="https://naijaro.github.io/poe-speed-calculator/">Pillars of Eternity</a>
+          <a class="navbar-brand nav-link" href="https://naijaro.github.io/deadfire-beta-speed-calculator/">Deadfire Beta</a>
         </div>
       </div>
     </div>
     <div class="container">
-      <h1 id="page-title">Speed Calculator - for Deadfire (Beta2)</h1>
+      <h1 id="page-title">Speed Calculator - for Deadfire Beta 3</h1>
       <p id="page-info">version 0.0.1 (alpha) <a class="text-muted" href="https://forums.obsidian.net/user/160416-maxquest/">by MaxQuest</a></p>     
       <form class="form-horizontal" id="main-form">
         <div class="row">
@@ -370,30 +370,18 @@
             <div class="well" id="buffs-well">        
               <div class="row">
                 <div class="col-lg-6 col-sm-6 col-xs-12">
-                  <div class="panel panel-default panel-effects" data-id="AttackSpeedMult">
-                    <div class="panel-heading">AttackSpeedMult <span class="badge badge-info">&nbsp;</span></div>
+                  <div class="panel panel-default panel-effects" data-id="affectsAllPhases">
+                    <div class="panel-heading">Affects All Phases <span class="badge badge-info">&nbsp;</span></div>
                     <div class="panel-body"></div>
                   </div>
                 </div>
                 <div class="col-lg-6 col-sm-6 col-xs-12">
-                  <div class="panel panel-default panel-effects" data-id="DualWieldAttackSpeedMult">
-                    <div class="panel-heading">DualWieldAttackSpeedMult <span class="badge badge-info">&nbsp;</span></div>
+                  <div class="panel panel-default panel-effects" data-id="affectsRecovery">
+                    <div class="panel-heading">Affects Recovery <span class="badge badge-info-alt">&nbsp;</span></div>
                     <div class="panel-body"></div>
                   </div>
-                  <div class="panel panel-default panel-effects" data-id="MeleeAttackSpeedMult">
-                    <div class="panel-heading">MeleeAttackSpeedMult <span class="badge badge-info">&nbsp;</span></div>
-                    <div class="panel-body"></div>
-                  </div>
-                  <div class="panel panel-default panel-effects" data-id="RangedAttackSpeedMult">
-                    <div class="panel-heading">RangedAttackSpeedMult <span class="badge badge-info">&nbsp;</span></div>
-                    <div class="panel-body"></div>
-                  </div>
-                  <div class="panel panel-default panel-effects" data-id="RateOfFireMult">
-                    <div class="panel-heading">RateOfFireMult <span class="badge badge-info">&nbsp;</span></div>
-                    <div class="panel-body"></div>
-                  </div>
-                  <div class="panel panel-default panel-effects" data-id="ReloadSpeedCoef">
-                    <div class="panel-heading">ReloadSpeedCoef <span class="badge badge-info-alt">&nbsp;</span></div>
+                  <div class="panel panel-default panel-effects" data-id="affectsReload">
+                    <div class="panel-heading">Affects Reload <span class="badge badge-info-alt">&nbsp;</span></div>
                     <div class="panel-body"></div>
                   </div>
                 </div>
@@ -472,64 +460,68 @@
       var MAX_ACTION_DURATION = 209;
       
       // var ATTACK_DURATION_XS = 14; // 0.5s
-      var ATTACK_DURATION_SM = 14; // 0.5s
+      var ATTACK_DURATION_SM = 15; // 0.5s
       var ATTACK_DURATION_MD = 21; // 0.7s
       var ATTACK_DURATION_LG = 27; // 0.9s
       var ATTACK_DURATION_XL = 33; // 1.1s
 
+      var RECOVERY_DURATION_SM = 90;
+      var RECOVERY_DURATION_MD = 120;
+      
       var NOTHING_ID = 0;
       var SHIELD_ID = 200;
       var BASHING_SHIELD_ID = 201;
       var FIST_ID = 300;
       var FIST_LONG_PAIN_ID = 301;
-
+      
       var WIELDABLE_CATEGORIES = {
-        oneHanded: 'One-Handed',
+        oneHandedMelee: 'One-Handed Melee',
         twoHandedMelee: 'Two-Handed Melee',
+        oneHandedRanged: 'One-Handed Ranged',
         twoHandedRanged: 'Two-Handed Ranged',
         shields: 'Shields',
         emptyHand: 'Empty Hand'
       };
             
       var WIELDABLES = [
-        GenWieldable(WIELDABLE_CATEGORIES.oneHanded, ATTACK_DURATION_MD, "Battle Axe"),
-        GenWieldable(WIELDABLE_CATEGORIES.oneHanded, ATTACK_DURATION_SM, "Club"),
-        GenWieldable(WIELDABLE_CATEGORIES.oneHanded, ATTACK_DURATION_SM, "Dagger"),
-        GenWieldable(WIELDABLE_CATEGORIES.oneHanded, ATTACK_DURATION_SM, "Fist", null, FIST_ID),
-        GenWieldable(WIELDABLE_CATEGORIES.oneHanded, ATTACK_DURATION_SM, "Fist (Long Pain)", null, FIST_LONG_PAIN_ID),
-        GenWieldable(WIELDABLE_CATEGORIES.oneHanded, ATTACK_DURATION_SM, "Flail"),
-        GenWieldable(WIELDABLE_CATEGORIES.oneHanded, ATTACK_DURATION_SM, "Hatchet"),
-        GenWieldable(WIELDABLE_CATEGORIES.oneHanded, ATTACK_DURATION_MD, "Mace"),
-        GenWieldable(WIELDABLE_CATEGORIES.oneHanded, ATTACK_DURATION_SM, "Rapier"),
-        GenWieldable(WIELDABLE_CATEGORIES.oneHanded, ATTACK_DURATION_MD, "Sabre"),
-        GenWieldable(WIELDABLE_CATEGORIES.oneHanded, ATTACK_DURATION_MD, "Spear"),
-        GenWieldable(WIELDABLE_CATEGORIES.oneHanded, ATTACK_DURATION_SM, "Stiletto"),
-        GenWieldable(WIELDABLE_CATEGORIES.oneHanded, ATTACK_DURATION_MD, "Sword"),
-        GenWieldable(WIELDABLE_CATEGORIES.oneHanded, ATTACK_DURATION_SM, "Torch"),
-        GenWieldable(WIELDABLE_CATEGORIES.oneHanded, ATTACK_DURATION_MD, "War Hammer"),
+        GenWieldable(WIELDABLE_CATEGORIES.oneHandedMelee, ATTACK_DURATION_MD, RECOVERY_DURATION_MD, 0, "Battle Axe"),
+        GenWieldable(WIELDABLE_CATEGORIES.oneHandedMelee, ATTACK_DURATION_SM, RECOVERY_DURATION_SM, 0, "Club"),
+        GenWieldable(WIELDABLE_CATEGORIES.oneHandedMelee, ATTACK_DURATION_SM, RECOVERY_DURATION_SM, 0, "Dagger"),
+        GenWieldable(WIELDABLE_CATEGORIES.oneHandedMelee, ATTACK_DURATION_SM, RECOVERY_DURATION_SM, 0, "Fist", FIST_ID),
+        GenWieldable(WIELDABLE_CATEGORIES.oneHandedMelee, ATTACK_DURATION_SM, RECOVERY_DURATION_SM, 0, "Flail"),
+        GenWieldable(WIELDABLE_CATEGORIES.oneHandedMelee, ATTACK_DURATION_SM, RECOVERY_DURATION_SM, 0, "Hatchet"),
+        GenWieldable(WIELDABLE_CATEGORIES.oneHandedMelee, ATTACK_DURATION_MD, RECOVERY_DURATION_MD, 0, "Mace"),
+        GenWieldable(WIELDABLE_CATEGORIES.oneHandedMelee, ATTACK_DURATION_SM, RECOVERY_DURATION_SM, 0, "Rapier"),
+        GenWieldable(WIELDABLE_CATEGORIES.oneHandedMelee, ATTACK_DURATION_MD, RECOVERY_DURATION_MD, 0, "Sabre"),
+        GenWieldable(WIELDABLE_CATEGORIES.oneHandedMelee, ATTACK_DURATION_MD, RECOVERY_DURATION_MD, 0, "Spear"),
+        GenWieldable(WIELDABLE_CATEGORIES.oneHandedMelee, ATTACK_DURATION_SM, RECOVERY_DURATION_SM, 0, "Stiletto"),
+        GenWieldable(WIELDABLE_CATEGORIES.oneHandedMelee, ATTACK_DURATION_MD, RECOVERY_DURATION_MD, 0, "Sword"),
+        GenWieldable(WIELDABLE_CATEGORIES.oneHandedMelee, ATTACK_DURATION_SM, RECOVERY_DURATION_SM, 0, "Torch"),
+        GenWieldable(WIELDABLE_CATEGORIES.oneHandedMelee, ATTACK_DURATION_MD, RECOVERY_DURATION_MD, 0, "War Hammer"),
         
-        GenWieldable(WIELDABLE_CATEGORIES.twoHandedMelee, ATTACK_DURATION_MD, "Estoc"),
-        GenWieldable(WIELDABLE_CATEGORIES.twoHandedMelee, ATTACK_DURATION_MD, "Great Sword"),
-        GenWieldable(WIELDABLE_CATEGORIES.twoHandedMelee, ATTACK_DURATION_MD, "Morning Star"),
-        GenWieldable(WIELDABLE_CATEGORIES.twoHandedMelee, ATTACK_DURATION_MD, "Pike"),
-        GenWieldable(WIELDABLE_CATEGORIES.twoHandedMelee, ATTACK_DURATION_MD, "Pollaxe"),
-        GenWieldable(WIELDABLE_CATEGORIES.twoHandedMelee, ATTACK_DURATION_MD, "Quarterstaff"),
+        GenWieldable(WIELDABLE_CATEGORIES.twoHandedMelee, ATTACK_DURATION_MD, RECOVERY_DURATION_MD, 0, "Estoc"),
+        GenWieldable(WIELDABLE_CATEGORIES.twoHandedMelee, ATTACK_DURATION_MD, RECOVERY_DURATION_MD, 0, "Great Sword"),
+        GenWieldable(WIELDABLE_CATEGORIES.twoHandedMelee, ATTACK_DURATION_MD, RECOVERY_DURATION_MD, 0, "Morning Star"),
+        GenWieldable(WIELDABLE_CATEGORIES.twoHandedMelee, ATTACK_DURATION_MD, RECOVERY_DURATION_MD, 0, "Pike"),
+        GenWieldable(WIELDABLE_CATEGORIES.twoHandedMelee, ATTACK_DURATION_MD, RECOVERY_DURATION_MD, 0, "Pollaxe"),
+        GenWieldable(WIELDABLE_CATEGORIES.twoHandedMelee, ATTACK_DURATION_MD, RECOVERY_DURATION_MD, 0, "Quarterstaff"),
         
-        GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_MD, "Arbalest", 180),
-        GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_MD, "Arquebus", 204),
-        GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_MD, "Blunderbuss", 150),
-        GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_LG, "Crossbow", 100),
-        GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_LG, "Hunting Bow"),
-        GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_XL, "Pistol", 150),
-        GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_XL, "Rod"),
-        GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_MD, "Sceptre"),
-        GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_MD, "Wand"),
-        GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_XL, "War Bow"),
+        GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_MD, 0, 180, "Arbalest"),
+        GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_MD, 0, 183, "Arquebus"),
+        GenWieldable(WIELDABLE_CATEGORIES.oneHandedRanged, ATTACK_DURATION_MD, 0, 150, "Blunderbuss"),
+        GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_LG, 0,  90, "Crossbow", 90),
+        GenWieldable(WIELDABLE_CATEGORIES.oneHandedRanged, ATTACK_DURATION_SM, RECOVERY_DURATION_SM, 0, "Fist (Long Pain)", FIST_LONG_PAIN_ID),
+        GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_LG, RECOVERY_DURATION_MD, 0, "Hunting Bow"),
+        GenWieldable(WIELDABLE_CATEGORIES.oneHandedRanged, ATTACK_DURATION_XL, 0, 150, "Pistol"),
+        GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_XL, RECOVERY_DURATION_MD, 0, "Rod"),
+        GenWieldable(WIELDABLE_CATEGORIES.oneHandedRanged, ATTACK_DURATION_MD, RECOVERY_DURATION_MD, 0, "Sceptre"),
+        GenWieldable(WIELDABLE_CATEGORIES.oneHandedRanged, ATTACK_DURATION_MD, RECOVERY_DURATION_SM, 0, "Wand"),
+        GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_XL, RECOVERY_DURATION_MD, 0, "War Bow"),
         
-        GenWieldable(WIELDABLE_CATEGORIES.shields, null, "Shield", null, SHIELD_ID),
-        // GenWieldable(WIELDABLE_CATEGORIES.shields, ATTACK_DURATION_SM, "Shield with Bash", null, BASHING_SHIELD_ID),
+        GenWieldable(WIELDABLE_CATEGORIES.shields, null, null, null, "Shield", SHIELD_ID),
+        // GenWieldable(WIELDABLE_CATEGORIES.shields, ATTACK_DURATION_SM, RECOVERY_DURATION_SM, null, "Shield with Bash", BASHING_SHIELD_ID),
         
-        GenWieldable(WIELDABLE_CATEGORIES.emptyHand, null, "Nothing", null, NOTHING_ID)
+        GenWieldable(WIELDABLE_CATEGORIES.emptyHand, null, null, null, "Nothing", NOTHING_ID)
       ];
       
       var $MAINHAND_SELECT;
@@ -542,14 +534,22 @@
       var IS_2H_SETUP;
       var IS_DW_SETUP;
       var IS_OFFHAND_ATTACKING;
+      var TWO_HANDED_STYLE_ID = 1001;
       
+      var PHASE = {
+        attack: 'attack',
+        recovery: 'recovery',
+        reload: 'reload'
+      };      
       var EFFECT_CATEGORIES = {
-        attackSpeedMult: 'AttackSpeedMult',
-        dualWieldAttackSpeedMult: 'DualWieldAttackSpeedMult',
-        meleeAttackSpeedMult: 'MeleeAttackSpeedMult',
-        rangedAttackSpeedMult: 'RangedAttackSpeedMult',
-        rateOfFireMult: 'RateOfFireMult',
-        reloadSpeedCoef: 'ReloadSpeedCoef'
+        affectsAllPhases: 'affectsAllPhases',
+        affectsRecovery: 'affectsRecovery',
+        affectsReload: 'affectsReload'
+      };
+      var EFFECT_WR = { // affected weapon range
+        any: 'any',
+        melee: 'melee',
+        ranged: 'ranged'
       };
       
       var SUPPRESING_CATEGORIES = {
@@ -563,54 +563,38 @@
       };
       var CURRENT_DEX = 10;
       var ARMOR_SPEED_COEF = 0;
+      var DW_SPEED_COEF = 1.4285; // half rec -> 2
       var RESULTS_PER_BLOCK = {};
       var PREVENT_RESULTS_BLINKING = false;
-      var EFFECT_COEFFICIENTS = {
-        melee: {},
-        ranged: {}
-      };
       
       var EFFECTS = [
-        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.20, "Bloodlust"), 
-        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.25, "Frenzy", SUPPRESING_CATEGORIES.attackSpeedMult1),
-        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.20, "Coral Snuff", SUPPRESING_CATEGORIES.attackSpeedMult1),
-        // GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.20, "Swift Aim", SUPPRESING_CATEGORIES.attackSpeedMult1, null, true),
-        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.25, "Potion of Deftness", SUPPRESING_CATEGORIES.attackSpeedMult1),  
-        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.50, "Potion of Relentless Striking", SUPPRESING_CATEGORIES.attackSpeedMult1),        
-        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.20, "Swift Strikes", SUPPRESING_CATEGORIES.attackSpeedMult1),
-        GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.40, "Their Champion Chant", SUPPRESING_CATEGORIES.attackSpeedMult1),
-        // GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.50, "Time Parasite", SUPPRESING_CATEGORIES.attackSpeedMult1),
-        // GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.20, "Vielo Vidorio", SUPPRESING_CATEGORIES.attackSpeedMult1),
+        GenEffect(EFFECT_CATEGORIES.affectsAllPhases, 1.20, "Bloodlust", EFFECT_WR.any), 
+        GenEffect(EFFECT_CATEGORIES.affectsAllPhases, 1.25, "Frenzy", EFFECT_WR.any, null, SUPPRESING_CATEGORIES.attackSpeedMult1),
+        GenEffect(EFFECT_CATEGORIES.affectsAllPhases, 1.20, "Coral Snuff", EFFECT_WR.any, null, SUPPRESING_CATEGORIES.attackSpeedMult1),
+        GenEffect(EFFECT_CATEGORIES.affectsAllPhases,  2/3, "Modal: Arbalests", EFFECT_WR.ranged, "Arbalest"), // Overbearing Shot
+        GenEffect(EFFECT_CATEGORIES.affectsAllPhases,  2/3, "Modal: Crossbows", EFFECT_WR.ranged, "Crossbow"), // Interrupting Shot
+        GenEffect(EFFECT_CATEGORIES.affectsAllPhases, 1.25, "Potion of Deftness", EFFECT_WR.any, null, SUPPRESING_CATEGORIES.attackSpeedMult1),  
+        GenEffect(EFFECT_CATEGORIES.affectsAllPhases, 1.50, "Potion of Relentless Striking", EFFECT_WR.any, null, SUPPRESING_CATEGORIES.attackSpeedMult1),        
+        GenEffect(EFFECT_CATEGORIES.affectsAllPhases, 1.20, "Swift Strikes", EFFECT_WR.any, null, SUPPRESING_CATEGORIES.attackSpeedMult1),
+        GenEffect(EFFECT_CATEGORIES.affectsAllPhases, 1.40, "Their Champion Chant", EFFECT_WR.any, null, SUPPRESING_CATEGORIES.attackSpeedMult1),
         
-        // Bleeding Cut: +100% Recovery Time with Battle Axes
-        // Piercing Blows: +100% Recovery Time with Battle Axes
-        // Windmill Slash: +100% Recovery Time with Sabres
-        // Vulnerable Thrust: +100% Recovery Time with Rapiers
-        // Defensive Strike: +100% Recovery Time with Quarterstaves
-        // Blast: +50% Recovery Time with Rods
-        // 
-        // Rapid Shot: -50% Recovery Time with Hunting Bow
-        // Overdraw: +100% Recovery Time with War Bow
-        // 
-        // Interrupting Shot: -50% Action Speed with Crossbow - no visual change
-        // Overbearing Shot: -50% Action Speed with Arbalests - visual: attack and reload cut in half
-        // Rushed Reload: +100% Reload Speed with Pistols - no visual change
-         
-//        GenEffect(EFFECT_CATEGORIES.dualWieldAttackSpeedMult, 1.20, "Two-Weapon Style"), 
-//        GenEffect(EFFECT_CATEGORIES.meleeAttackSpeedMult, 0.80, "Vulnerable Attack"), 
-//        GenEffect(EFFECT_CATEGORIES.rangedAttackSpeedMult, 0.80, "Penetrating Shot"),        
-//        GenEffect(EFFECT_CATEGORIES.rateOfFireMult, 1.20, "Sure-Handed Chant", null, null, true),
-//        GenEffect(EFFECT_CATEGORIES.rateOfFireMult, 0.80, "Vicious Aim", null, null, true),
-//        
-//        GenEffect(EFFECT_CATEGORIES.reloadSpeedCoef, 1.20, "Gunner"),
-//        GenEffect(EFFECT_CATEGORIES.reloadSpeedCoef, 1.20, "Sure-Handed Chant", SUPPRESING_CATEGORIES.reloadSpeedCoef1, null, true),
-//        GenEffect(EFFECT_CATEGORIES.reloadSpeedCoef, 1.50, "Swift Aim", SUPPRESING_CATEGORIES.reloadSpeedCoef1, null, true),
-//        GenEffect(EFFECT_CATEGORIES.reloadSpeedCoef, 0.80, "Vicious Aim", null, null, true)
+        GenEffect(EFFECT_CATEGORIES.affectsRecovery, 0.50, "Modal: Battle Axes", EFFECT_WR.melee, "Battle Axe"), // Bleeding Cut
+        GenEffect(EFFECT_CATEGORIES.affectsRecovery, 2.00, "Modal: Hunting Bow", EFFECT_WR.ranged, "Hunting Bow"), // Rapid Shot
+        GenEffect(EFFECT_CATEGORIES.affectsRecovery, 0.50, "Modal: Quarterstaves", EFFECT_WR.melee, "Quarterstaff"), // Defensive Strike
+        GenEffect(EFFECT_CATEGORIES.affectsRecovery, 0.50, "Modal: Rapiers", EFFECT_WR.melee, "Rapier"), // Vulnerable Thrust        
+        GenEffect(EFFECT_CATEGORIES.affectsRecovery, 0.50, "Modal: Sabres", EFFECT_WR.melee, "Sabre"), // Windmill Slash
+        GenEffect(EFFECT_CATEGORIES.affectsRecovery, 0.50, "Modal: War Bows", EFFECT_WR.ranged, "War Bow"), // Overdraw
+        GenEffect(EFFECT_CATEGORIES.affectsRecovery, 0.50, "Modal: War Hammers", EFFECT_WR.melee, "War Hammer"), // Piercing Blows
+        GenEffect(EFFECT_CATEGORIES.affectsRecovery, 1.20, "Sure-Handed Chant", EFFECT_WR.ranged, null, null, null, true),
+        GenEffect(EFFECT_CATEGORIES.affectsRecovery, 1.20, "Two-Handed Style", EFFECT_WR.any, null, null, TWO_HANDED_STYLE_ID),        
+        
+        GenEffect(EFFECT_CATEGORIES.affectsReload, 2.00, "Modal: Pistols", EFFECT_WR.ranged, "Pistol"),
+        GenEffect(EFFECT_CATEGORIES.affectsReload, 1.20, "Sure-Handed Chant", EFFECT_WR.ranged, null, null, null, true)
       ];
       
       var GLOVES_EFFECTS = {
-        swift_action: GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.15, "Gauntlets of Swift Action"),
-        mourning: GenEffect(EFFECT_CATEGORIES.attackSpeedMult, 1.10, "Mourning Gloves", SUPPRESING_CATEGORIES.attackSpeedMult1)
+        swift_action: GenEffect(EFFECT_CATEGORIES.affectsAllPhases, 1.15, "Gauntlets of Swift Action", EFFECT_WR.any),
+        mourning: GenEffect(EFFECT_CATEGORIES.affectsAllPhases, 1.10, "Mourning Gloves", EFFECT_WR.any, null, SUPPRESING_CATEGORIES.attackSpeedMult1)
       };
       
       var ENABLED_EFFECTS = {};
@@ -714,7 +698,6 @@
           if (effect.multieffect)
           {
             var siblingEffect = GetEffectWithTheSameTitle(effect);
-            
             if (siblingEffect)
             {
               lockPropagation = true;
@@ -794,7 +777,7 @@
         
         if (MH_WIELDABLE.id == FIST_LONG_PAIN_ID && OH_WIELDABLE.id != FIST_LONG_PAIN_ID)
         {
-          var recommendedMHId = OH_WIELDABLE.category == WIELDABLE_CATEGORIES.oneHanded ? OH_WIELDABLE.id : 1;
+          var recommendedMHId = OH_WIELDABLE.category == WIELDABLE_CATEGORIES.oneHandedMelee ? OH_WIELDABLE.id : 1;
           SetSelectWieldable('mainhand', recommendedMHId, true);
         }
         
@@ -804,7 +787,7 @@
       
       /* ****************************** GETTERS ***************************** */
       
-      function GenWieldable(category, attackDuration, title, reloadDuration, forcedId)
+      function GenWieldable(category, attackDuration, recoveryDuration, reloadDuration, title, forcedId)
       {
         var wieldableId = null;
         
@@ -824,6 +807,7 @@
           title: title,
           category: category,
           attackDuration: attackDuration,
+          recoveryDuration: recoveryDuration || null,
           reloadDuration: reloadDuration || null
         };
       }
@@ -837,7 +821,7 @@
         return null;
       }
       
-      function GenEffect(category, value, title, suppressingCategory, forcedId, multieffect)
+      function GenEffect(category, value, title, rangeType, weaponType, suppressingCategory, forcedId, multieffect)
       {
         var effectId = null;
         
@@ -856,7 +840,9 @@
           id: effectId,
           title: title,
           value: value,
-          category: category,          
+          category: category,
+          rangeType: rangeType || EFFECT_WR.any,
+          weaponType: weaponType || null,
           suppressingCategory: suppressingCategory || null,
           suppressed: false,
           multieffect: multieffect ? true : false
@@ -880,23 +866,7 @@
         
         return null;
       }
-      
-      function GetEnabledEffectsCoefficients(category)
-      {
-        var coefficients = [];
-        var effect = null;
-        
-        for (var i in ENABLED_EFFECTS)
-        {
-          effect = ENABLED_EFFECTS[i];
-          
-          if (effect.category == category && effect.suppressed == false)
-            coefficients.push(effect.value);
-        }
-        
-        return coefficients;
-      }
-      
+            
       function GetBaseResultsBlock()
       {
         if (VARS.$BASE_RESULTS_BLOCK == null)
@@ -959,8 +929,9 @@
       function PopulateMainhandSelect()
       {
         var categories = [
-          WIELDABLE_CATEGORIES.oneHanded, 
-          WIELDABLE_CATEGORIES.twoHandedMelee, 
+          WIELDABLE_CATEGORIES.oneHandedMelee, 
+          WIELDABLE_CATEGORIES.twoHandedMelee,
+          WIELDABLE_CATEGORIES.oneHandedRanged,
           WIELDABLE_CATEGORIES.twoHandedRanged
         ];
         
@@ -972,7 +943,8 @@
         var categories = [
           WIELDABLE_CATEGORIES.emptyHand,
           WIELDABLE_CATEGORIES.shields,
-          WIELDABLE_CATEGORIES.oneHanded
+          WIELDABLE_CATEGORIES.oneHandedMelee,
+          WIELDABLE_CATEGORIES.oneHandedRanged
         ]; 
         PopulateWieldableSelect($OFFHAND_SELECT, categories, WIELDABLES); 
       }
@@ -999,17 +971,14 @@
       
       function PopulateEffects()
       {
-        PopulateEffectsPanel(EFFECT_CATEGORIES.attackSpeedMult);
-        PopulateEffectsPanel(EFFECT_CATEGORIES.dualWieldAttackSpeedMult);
-        PopulateEffectsPanel(EFFECT_CATEGORIES.meleeAttackSpeedMult);
-        PopulateEffectsPanel(EFFECT_CATEGORIES.rangedAttackSpeedMult);
-        PopulateEffectsPanel(EFFECT_CATEGORIES.rateOfFireMult);
-        PopulateEffectsPanel(EFFECT_CATEGORIES.reloadSpeedCoef, 'info-alt');
+        PopulateEffectsPanel(EFFECT_CATEGORIES.affectsAllPhases);
+        PopulateEffectsPanel(EFFECT_CATEGORIES.affectsRecovery, 'info-alt');
+        PopulateEffectsPanel(EFFECT_CATEGORIES.affectsReload, 'info-alt');
       }
       
       function PopulateEffectsPanel(category, style)
       {
-        var $panel = $('.panel-effects[data-id="' + category + '"]');        
+        var $panel = $('.panel-effects[data-id="' + category + '"]');
         var effectsHtml = '';
         style = style || 'info';
         
@@ -1113,16 +1082,16 @@
       function UpdateSetupConfig() 
       {
         var was2H = IS_2H_SETUP;
+        var mhIs1H = MH_WIELDABLE.category == WIELDABLE_CATEGORIES.oneHandedMelee ||
+                     MH_WIELDABLE.category == WIELDABLE_CATEGORIES.oneHandedRanged;
+        var ohIs1H = OH_WIELDABLE.category == WIELDABLE_CATEGORIES.oneHandedMelee ||
+                     OH_WIELDABLE.category == WIELDABLE_CATEGORIES.oneHandedRanged;    
         
         IS_2H_SETUP = MH_WIELDABLE.category == WIELDABLE_CATEGORIES.twoHandedMelee ||
                       MH_WIELDABLE.category == WIELDABLE_CATEGORIES.twoHandedRanged;
         
-        IS_DW_SETUP = MH_WIELDABLE.category == WIELDABLE_CATEGORIES.oneHanded &&
-                      OH_WIELDABLE.category == WIELDABLE_CATEGORIES.oneHanded &&
-                     !IS_2H_SETUP;
-        
-        IS_OFFHAND_ATTACKING = (OH_WIELDABLE.category == WIELDABLE_CATEGORIES.oneHanded ||
-                                OH_WIELDABLE.id == BASHING_SHIELD_ID) && !IS_2H_SETUP;
+        IS_DW_SETUP = mhIs1H && ohIs1H;        
+        IS_OFFHAND_ATTACKING = (ohIs1H || OH_WIELDABLE.id == BASHING_SHIELD_ID) && !IS_2H_SETUP;
                 
         if (!was2H && IS_2H_SETUP)
           $WEAPONS_ROW.addClass('two-handed inline');
@@ -1144,15 +1113,11 @@
         var totalFramesFinal = GetTotalFrames(finalValues);
         
         var delay = GetDelayValue();
-        // var maxDuration = 1.7 * ATTACK_DURATION_LG * 16 / 6 + delay + 50;
-        var maxDuration = 1.7 * ATTACK_DURATION_LG * 74 / 14 + delay + 50;
+        var maxDuration = 2 * (ATTACK_DURATION_LG + 255) + 5;
         
         if (IS_OFFHAND_ATTACKING)
           maxDuration+= delay;
-        
-        if (baseValues && baseValues.mh && baseValues.mh.reload > 0)
-          maxDuration+= 250;
-                
+                        
         maxDuration = Math.max(maxDuration, totalFramesBase);
         maxDuration = Math.max(maxDuration, totalFramesFinal);
         MAX_ACTION_DURATION = maxDuration + 1;
@@ -1198,44 +1163,9 @@
         }
       }
       
-      function UpdateEffectCoefficients()
-      {
-        var meleeCategories = [
-          EFFECT_CATEGORIES.attackSpeedMult,
-          EFFECT_CATEGORIES.dualWieldAttackSpeedMult,
-          EFFECT_CATEGORIES.meleeAttackSpeedMult
-        ];
-        
-        var rangedCategories = [
-          EFFECT_CATEGORIES.attackSpeedMult,
-          EFFECT_CATEGORIES.dualWieldAttackSpeedMult,
-          EFFECT_CATEGORIES.rangedAttackSpeedMult,
-          EFFECT_CATEGORIES.rateOfFireMult,
-          EFFECT_CATEGORIES.reloadSpeedCoef
-        ];
-        
-        UpdateEffectCoefficientsByRange('melee', meleeCategories);
-        UpdateEffectCoefficientsByRange('ranged', rangedCategories);
-      }
-      
-      function UpdateEffectCoefficientsByRange(range, categories)
-      {
-        for (var i in categories)
-        {
-          var category = categories[i];
-          
-          if (category == EFFECT_CATEGORIES.dualWieldAttackSpeedMult && !IS_DW_SETUP)
-            continue;
-          
-          EFFECT_COEFFICIENTS[range][category] = MultArrayValues(GetEnabledEffectsCoefficients(category));
-        }
-      }
-      
       function UpdateResults()
       {
-        UpdateEffectCoefficients();
-        UpdateArmorSpeedCoef();
-        
+        UpdateArmorSpeedCoef();        
         var baseValues = ComputeBaseValues();
         var finalValues = ComputeFinalValues(baseValues);
         UpdateMaxActionDuration(baseValues, finalValues);
@@ -1251,7 +1181,7 @@
         var $container = $('#armor-col');        
         var withArmoredGrace = $container.find('.property[data-prop="armored_grace"]').is(':checked');
         
-        var speedCoef = $container.find("select").val();
+        var speedCoef = Number($container.find("select").val());
             speedCoef+= withArmoredGrace ? 0.20 : 0;
         
         ARMOR_SPEED_COEF = Math.min(1, speedCoef);
@@ -1263,12 +1193,11 @@
       function ComputeBaseValues()
       {
         var values = [];
-        var recoveryFactor = 7/30;
         
         if (MH_WIELDABLE != null)
         {
-          var mhRecovery = Math.round(100 * MH_WIELDABLE.attackDuration / recoveryFactor) / 100;
-              mhRecovery/= IS_DW_SETUP ? 2 : 1; 
+          var mhRecovery = MH_WIELDABLE.recoveryDuration;
+              mhRecovery/= IS_DW_SETUP ? DW_SPEED_COEF : 1; 
           
           values.mh = {
             attack: MH_WIELDABLE.attackDuration,
@@ -1279,12 +1208,13 @@
         
         if (IS_OFFHAND_ATTACKING)
         {
-          var ohRecovery = Math.round(100 * OH_WIELDABLE.attackDuration / recoveryFactor / 2) / 100;
-          
+          var ohRecovery = OH_WIELDABLE.recoveryDuration;
+              ohRecovery/= IS_DW_SETUP ? DW_SPEED_COEF : 1;
+              
           values.oh = {
             attack: OH_WIELDABLE.attackDuration,
             recovery: ohRecovery,
-            reload: null
+            reload: OH_WIELDABLE.reloadDuration
           };
         }
         
@@ -1294,88 +1224,65 @@
       function ComputeFinalValues(values)
       {
         values = jQuery.extend(true, {}, values || ComputeBaseValues());
-        var cats = EFFECT_CATEGORIES;
-        var coefs = WieldableIsRanged(MH_WIELDABLE) ? EFFECT_COEFFICIENTS.ranged
-                                                    : EFFECT_COEFFICIENTS.melee;
-                   
-        var dexCoef = GetDexCoef(CURRENT_DEX);
-        if (values.mh && values.mh.reload && coefs[cats.reloadSpeedCoef])
-          values.mh.reload/= coefs[cats.reloadSpeedCoef] * dexCoef;
+        var hand;
         
-        var speedCoefMH = ComputeMainhandSpeedCoef();
-        var speedCoefOH = ComputeOffhandSpeedCoef();
-        
-        var recoveryFactor = 7/30;
-        var recoveryCoefMH = 1 / speedCoefMH / recoveryFactor;
-        var recoveryCoefOH = 1 / speedCoefOH / recoveryFactor;
-                
         if (values.mh && values.mh.attack)
         {
-          //values.mh.attack/= dexCoef;
-          values.mh.recovery = values.mh.attack * recoveryCoefMH;
+          hand = 'mh';
+          values.mh.attack = MH_WIELDABLE.attackDuration / ComputeHandSpeedCoef(hand, PHASE.attack);
+          values.mh.recovery = MH_WIELDABLE.recoveryDuration / ComputeHandSpeedCoef(hand, PHASE.recovery);
+          values.mh.reload = MH_WIELDABLE.reloadDuration / ComputeHandSpeedCoef(hand, PHASE.reload);
         }
         
         if (values.oh && values.oh.attack)
         {
-          //values.oh.attack/= dexCoef;
-          values.oh.recovery = values.oh.attack * recoveryCoefOH;
+          hand = 'oh';
+          values.oh.attack = OH_WIELDABLE.attackDuration / ComputeHandSpeedCoef(hand, PHASE.attack);
+          values.oh.recovery = OH_WIELDABLE.recoveryDuration / ComputeHandSpeedCoef(hand, PHASE.recovery);
+          values.oh.reload = OH_WIELDABLE.reloadDuration / ComputeHandSpeedCoef(hand, PHASE.reload);
         }
         
         return values;
       }
       
-      function ComputeMainhandSpeedCoef()
+      function ComputeHandSpeedCoef(hand, phase)
       {
-        if (MH_WIELDABLE == null)
-          return 0;
-        
-        var hand = 'mh';        
-        var speedCoef = 0;
-        var cats = EFFECT_CATEGORIES;
-        var coefs = WieldableIsRanged(MH_WIELDABLE) ? EFFECT_COEFFICIENTS.ranged
-                                                    : EFFECT_COEFFICIENTS.melee;
-        var coefficients = jQuery.extend(true, {}, coefs);
-        
-        // var $container = GetMainhandCol();
-        // var speedCheckboxChecked = $container.find('.property[data-prop="speed"]').is(':checked');        
-        // var hasSpeed = speedCheckboxChecked && WieldableCanHaveSpeed(MH_WIELDABLE);
-        
         ResetFinalMultiplier(hand);
-        for (var category in coefficients)
-        {
-          AddStepMultiplier(hand, coefficients[category]);         
-        }
+        var wieldable = hand == 'oh' ? OH_WIELDABLE : MH_WIELDABLE;
         
-        AddStepMultiplier(hand, ARMOR_SPEED_COEF);
+        if (wieldable == null)
+          return 0;
+                
+        for (var key in ENABLED_EFFECTS)
+        {
+          var effect = ENABLED_EFFECTS[key];
+          
+          if (!EffectAffectsPhase(effect, phase) || effect.suppressed)
+            continue;
+          
+          if (effect.rangeType == 'ranged' && !WieldableIsRanged(wieldable))
+            continue;
+          
+          if (effect.rangeType == 'melee' && WieldableIsRanged(wieldable))
+            continue;
+          
+          if (effect.weaponType != null && effect.weaponType != wieldable.title)
+            continue;
+          
+          if (effect.id == TWO_HANDED_STYLE_ID && !IS_DW_SETUP)
+            continue;
+          
+          AddStepMultiplier(hand, effect.value);          
+        }
+                
         AddStepMultiplier(hand, GetDexCoef(CURRENT_DEX));
         
-        return GetFinalMultiplier(hand);
-      }
-      
-      function ComputeOffhandSpeedCoef()
-      {
-        if (OH_WIELDABLE == null)
-          return 0;
-        
-        var hand = 'oh';
-        var speedCoef = 0;
-        var cats = EFFECT_CATEGORIES;
-        var coefs = WieldableIsRanged(OH_WIELDABLE) ? EFFECT_COEFFICIENTS.ranged
-                                                    : EFFECT_COEFFICIENTS.melee;
-        var coefficients = jQuery.extend(true, {}, coefs);
-        
-        // var $container = GetOffhandCol();
-        // var speedCheckboxChecked = $container.find('.property[data-prop="speed"]').is(':checked');        
-        // var hasSpeed = speedCheckboxChecked && WieldableCanHaveSpeed(OH_WIELDABLE);
-        
-        ResetFinalMultiplier(hand);
-        for (var category in coefficients)
+        if (phase == PHASE.recovery)
         {
-          AddStepMultiplier(hand, coefficients[category]);         
+          AddStepMultiplier(hand, ARMOR_SPEED_COEF);          
+          if (IS_DW_SETUP)
+          AddStepMultiplier(hand, DW_SPEED_COEF);
         }
-        
-        AddStepMultiplier(hand, ARMOR_SPEED_COEF);
-        AddStepMultiplier(hand, GetDexCoef(CURRENT_DEX));
         
         return GetFinalMultiplier(hand);
       }
@@ -1411,29 +1318,35 @@
         return 1 + (dex - 10) / 33.3;
       }
       
+      function EffectAffectsPhase(effect, phase)
+      {
+        if (effect == null)
+          return false;
+        
+        if (effect.category == EFFECT_CATEGORIES.affectsAllPhases)
+          return true;
+        
+        if (effect.category == EFFECT_CATEGORIES.affectsRecovery && phase == PHASE.recovery)
+          return true;
+        
+        if (effect.category == EFFECT_CATEGORIES.affectsReload && phase == PHASE.reload)
+          return true;
+        
+        return false;
+      }
+      
       function WieldableIsRanged(wieldable)
       {
         return wieldable != null && (
-               wieldable.category == WIELDABLE_CATEGORIES.twoHandedRanged ||
-               wieldable.id == FIST_LONG_PAIN_ID);
+               wieldable.category == WIELDABLE_CATEGORIES.oneHandedRanged ||
+               wieldable.category == WIELDABLE_CATEGORIES.twoHandedRanged);
       }
       
       function WieldableIsFist(wieldable)
       {
         return wieldable != null && (wieldable.id == FIST_ID || wieldable.id == FIST_LONG_PAIN_ID);
       }
-      
-      function IsMultiplicativeRecoveryCategory(category)
-      {
-        return $.inArray(category, [
-          EFFECT_CATEGORIES.attackSpeedMult,
-          EFFECT_CATEGORIES.dualWieldAttackSpeedMult,
-          EFFECT_CATEGORIES.meleeAttackSpeedMult,
-          EFFECT_CATEGORIES.rangedAttackSpeedMult,
-          EFFECT_CATEGORIES.rateOfFireMult
-        ]) >= 0;
-      }
-            
+                  
       function WieldableCanHaveSpeed(wieldable)
       {
         return wieldable != null && !WieldableIsFist(wieldable) && $.inArray(wieldable.category, [
@@ -1456,17 +1369,7 @@
       {
         return GetRoundedValue(frames) + 'f' + ' (' + GetRoundedValue(frames/30) + 's)';
       }
-      
-      function MultArrayValues(arr)
-      {
-        var foo = 1;
-        
-        for (var i in arr)
-          foo*= arr[i];
-        
-        return foo;
-      }
-      
+            
       /* ******************************************************************** */
       
       function AddStepMultiplier(hand, multCoef)
@@ -1481,8 +1384,12 @@
       
       function GetFinalMultiplier(hand)
       {
-        var sum = CURRENT_STEP_MULT_SUM[hand];
-        return sum >= 0 ? sum + 1 : 1 / (1 - sum);
+        return GetStepsCoef(CURRENT_STEP_MULT_SUM[hand]);
+      }
+      
+      function GetStepsCoef(stepsSum)
+      {
+        return stepsSum >= 0 ? stepsSum + 1 : 1 / (1 - stepsSum);
       }
       
       function ResetFinalMultiplier(hand)
