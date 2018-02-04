@@ -219,7 +219,7 @@
         text-align: right;
       }
       #buffs-well {
-        min-height: 801px;
+        min-height: 628px;
       }
       #how-it-is-computed {
         float: right;
@@ -295,7 +295,7 @@
                 <div class="col-lg-12 col-sm-12 col-xs-12" id="armor-col">
                   <div class="panel panel-default">
                     <div class="panel-heading">Armor Type</div>
-                    <div class="panel-body">
+                    <div class="panel-body" style="padding-bottom: 40px;">
                       <select class="form-control">
                         <optgroup label="No Armor">
                           <option value="1" data-recovery-penalty="0">Naked</option>
@@ -367,6 +367,18 @@
           </div>
           <div class="col-lg-6 col-md-6 col-xs-12" id="effects-block" style="float: right;">
             <h3 class="block-title">Buffs & Effects</h3>
+            <div class="well">
+              <div class="row">
+                <div class="col-xs-12">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">Alchemy: <span id="final-alchemy-value">0</span> <span style="color:#7a8288; float: right;">* affects potions</span></div>
+                    <div class="panel-body">
+                      <div id="alchemy-slider" style="min-height: 18px; margin-top: 5px; margin-bottom: 18px;"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="well" id="buffs-well">        
               <div class="row">
                 <div class="col-lg-6 col-sm-6 col-xs-12">
@@ -386,12 +398,12 @@
                   </div>
                 </div>
               </div>
-            </div>  
+            </div>            
           </div>          
           <div class="col-lg-6 col-md-6 col-xs-12" id="results-block">            
             <h3 class="block-title">
               <span class="title-text">Result</span>
-              <a id="how-it-is-computed" class="hidden" href="https://forums.obsidian.net/topic/86684-mechanics-the-big-attack-speed-conundrum/" target="_blank"><i class="glyphicon glyphicon-link"></i> how it is computed</a>
+              <a id="how-it-is-computed" href="https://forums.obsidian.net/topic/95847-attackaction-speed-thread/" target="_blank"><i class="glyphicon glyphicon-link"></i> how it is computed</a>
             </h3>
             <div id="result-values">
               <i class="glyphicon glyphicon-pushpin" id="results-pin"></i>
@@ -509,7 +521,7 @@
         GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_MD, 0, 208, "Arbalest"),
         GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_MD, 0, 219, "Arquebus"),
         GenWieldable(WIELDABLE_CATEGORIES.oneHandedRanged, ATTACK_DURATION_MD, 0, 205, "Blunderbuss"),
-        GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_LG, 0, 183, "Crossbow", 90),
+        GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_MD, 0, 183, "Crossbow", 90),
         GenWieldable(WIELDABLE_CATEGORIES.oneHandedRanged, ATTACK_DURATION_SM, RECOVERY_DURATION_SM, 0, "Fist (Long Pain)", FIST_LONG_PAIN_ID),
         GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_LG, RECOVERY_DURATION_MD, 0, "Hunting Bow"),
         GenWieldable(WIELDABLE_CATEGORIES.oneHandedRanged, ATTACK_DURATION_XL, 0, 176, "Pistol"),
@@ -562,6 +574,7 @@
         oh: 0
       };
       var CURRENT_DEX = 10;
+      var CURRENT_ALCHEMY = 0;
       var ARMOR_SPEED_COEF = 0;
       var DW_SPEED_COEF = 1/0.7; // 0.5 in beta1 and beta2
       var RESULTS_PER_BLOCK = {};
@@ -573,8 +586,8 @@
         GenEffect(EFFECT_CATEGORIES.affectsAllPhases, 1.20, "Coral Snuff", EFFECT_WR.any, null, SUPPRESING_CATEGORIES.attackSpeedMult1),
         GenEffect(EFFECT_CATEGORIES.affectsAllPhases,  2/3, "Modal: Arbalests", EFFECT_WR.ranged, "Arbalest"), // Overbearing Shot
         GenEffect(EFFECT_CATEGORIES.affectsAllPhases,  2/3, "Modal: Crossbows", EFFECT_WR.ranged, "Crossbow"), // Interrupting Shot
-        GenEffect(EFFECT_CATEGORIES.affectsAllPhases, 1.25, "Potion of Deftness", EFFECT_WR.any, null, SUPPRESING_CATEGORIES.attackSpeedMult1),  
-        GenEffect(EFFECT_CATEGORIES.affectsAllPhases, 1.50, "Potion of Relentless Striking", EFFECT_WR.any, null, SUPPRESING_CATEGORIES.attackSpeedMult1),        
+        GenEffect(EFFECT_CATEGORIES.affectsAllPhases, 1.25, "Potion of Deftness", EFFECT_WR.any, null, SUPPRESING_CATEGORIES.attackSpeedMult1, null, false, 0.05),
+        GenEffect(EFFECT_CATEGORIES.affectsAllPhases, 1.50, "Potion of Relentless Striking", EFFECT_WR.any, null, SUPPRESING_CATEGORIES.attackSpeedMult1, null, false, 0.01),        
         GenEffect(EFFECT_CATEGORIES.affectsAllPhases, 1.20, "Swift Strikes", EFFECT_WR.any, null, SUPPRESING_CATEGORIES.attackSpeedMult1),
         GenEffect(EFFECT_CATEGORIES.affectsAllPhases, 1.40, "Their Champion Chant", EFFECT_WR.any, null, SUPPRESING_CATEGORIES.attackSpeedMult1),
         
@@ -616,6 +629,7 @@
         PopulateWeaponSelects();
         PopulateEffects();
         InitDexSlider();
+        InitAlchemySlider();
         BindEvents();
         
         UpdateResults();
@@ -645,6 +659,35 @@
           CURRENT_DEX = Math.round(values[handle]);
           sliderValue.innerHTML = CURRENT_DEX;
           PREVENT_RESULTS_BLINKING = true;
+          UpdateResults();
+        });
+      }
+      
+      function InitAlchemySlider()
+      {
+        var slider = document.getElementById('alchemy-slider');
+        var sliderValue = document.getElementById('final-alchemy-value');
+
+        noUiSlider.create(slider, {
+          start: CURRENT_ALCHEMY,
+          connect: [true, false],
+          step: 1,
+          range: {
+            'min': 0,
+            'max': 20
+          },
+          pips: {
+            mode: 'values',
+            values: [5, 10, 15],
+            density: 5
+          }
+        });
+        
+        slider.noUiSlider.on('update', function(values, handle) {
+          CURRENT_ALCHEMY = Math.round(values[handle]);
+          sliderValue.innerHTML = CURRENT_ALCHEMY;
+          PREVENT_RESULTS_BLINKING = true;
+          UpdateSuppression();
           UpdateResults();
         });
       }
@@ -822,7 +865,7 @@
         return null;
       }
       
-      function GenEffect(category, value, title, rangeType, weaponType, suppressingCategory, forcedId, multieffect)
+      function GenEffect(category, value, title, rangeType, weaponType, suppressingCategory, forcedId, multieffect, bonusPerAlchemyPoint)
       {
         var effectId = null;
         
@@ -846,7 +889,8 @@
           weaponType: weaponType || null,
           suppressingCategory: suppressingCategory || null,
           suppressed: false,
-          multieffect: multieffect ? true : false
+          multieffect: multieffect ? true : false,
+          bonusPerAlchemyPoint : bonusPerAlchemyPoint ? bonusPerAlchemyPoint : 0
         };
       }
       
@@ -1140,9 +1184,9 @@
             if (effect.suppressingCategory == suppressingCategory)
             {
               if (unsuppresedEffect == null ||
-                 (effect.value > 1 && effect.value > unsuppresedEffect.value) ||
-                 (effect.value < 1 && effect.value < unsuppresedEffect.value))
-                unsuppresedEffect = effect;
+                 (GetEffectValue(effect) > 1 && GetEffectValue(effect) > GetEffectValue(unsuppresedEffect)) ||
+                 (GetEffectValue(effect) < 1 && GetEffectValue(effect) < GetEffectValue(unsuppresedEffect)))
+                unsuppresedEffect = effect;              
             }
           }
           
@@ -1272,8 +1316,8 @@
           
           if (effect.id == TWO_WEAPON_STYLE_ID && !IS_DW_SETUP)
             continue;
-          
-          AddStepMultiplier(hand, effect.value);          
+                   
+          AddStepMultiplier(hand, GetEffectValue(effect));          
         }
                 
         AddStepMultiplier(hand, GetDexCoef(CURRENT_DEX));
@@ -1289,6 +1333,11 @@
       }
       
       /* ****************************** UTILS ******************************* */
+      
+      function GetEffectValue(effect)
+      {
+        return effect == null ? 0 : effect.value + effect.bonusPerAlchemyPoint * CURRENT_ALCHEMY; 
+      }
       
       function GetTotalFrames(data, dex)
       {
