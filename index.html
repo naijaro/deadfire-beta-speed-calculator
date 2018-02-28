@@ -285,7 +285,7 @@
     </div>
     <div class="container">
       <h1 id="page-title">Speed Calculator - for Deadfire Beta 3</h1>
-      <p id="page-info">version 0.0.2 (alpha) <a class="text-muted" href="https://forums.obsidian.net/user/160416-maxquest/">by MaxQuest</a></p>     
+      <p id="page-info">version 0.0.3 (beta) <a class="text-muted" href="https://forums.obsidian.net/user/160416-maxquest/">by MaxQuest</a></p>     
       <form class="form-horizontal" id="main-form">
         <div class="row">
           <div class="col-lg-6 col-md-6 col-xs-12" id="equipment-block">
@@ -416,6 +416,7 @@
                   <div class="progress-bar                      oh-delay hidden"  style="width: 1.5444%;" title="Delay (4-5 frames)"></div>
                   <div class="progress-bar progress-bar-success oh-attack hidden" style="width: 0%" title="Attack duration"></div>
                   <div class="progress-bar progress-bar-warning oh-recovery hidden" style="width: 0%;" title="Recovery duration"></div>
+                  <div class="progress-bar progress-bar-danger  oh-reload" style="width: 0%" title="Reload duration"></div>
                 </div>
                 <small>Base (at <span id="base-dex-value">10</span> DEX): 
                   <cite title="Speed">
@@ -423,7 +424,8 @@
                           class="mh-recovery-result">, recovery: <span class="value">50f</span></span><span 
                           class="mh-reload-result hidden">, reload: <span class="value">150f</span></span><span 
                           class="oh-attack-result hidden">, attack: <span class="value">30f</span></span><span 
-                          class="oh-recovery-result hidden">, recovery: <span class="value">50f</span></span>
+                          class="oh-recovery-result hidden">, recovery: <span class="value">50f</span></span><span
+                          class="oh-reload-result hidden">, reload: <span class="value">150f</span></span>
                   </cite>
                 </small>
               </blockquote>
@@ -436,6 +438,7 @@
                   <div class="progress-bar                      oh-delay hidden"  style="width: 0%;" title="Delay (4-5 frames)"></div>
                   <div class="progress-bar progress-bar-success oh-attack hidden" style="width: 0%" title="Attack duration"></div>
                   <div class="progress-bar progress-bar-warning oh-recovery hidden" style="width: 0%;" title="Recovery duration"></div>
+                  <div class="progress-bar progress-bar-danger  oh-reload" style="width: 0%" title="Reload duration"></div>
                 </div>
                 <small>Final (at <span id="final-dex-value">10</span> DEX): 
                   <cite title="Speed">
@@ -443,7 +446,8 @@
                           class="mh-recovery-result">, recovery: <span class="value">50f</span></span><span 
                           class="mh-reload-result hidden">, reload: <span class="value">150f</span></span><span 
                           class="oh-attack-result hidden">, attack: <span class="value">30f</span></span><span 
-                          class="oh-recovery-result hidden">, recovery: <span class="value">50f</span></span>
+                          class="oh-recovery-result hidden">, recovery: <span class="value">50f</span></span><span
+                          class="oh-reload-result hidden">, reload: <span class="value">150f</span></span>
                   </cite>
                 </small>
                 <div id="dex-slider" style="min-height: 18px;"></div>
@@ -1074,6 +1078,7 @@
         
         var ohAttack = data.oh && data.oh.attack ? data.oh.attack : 0;
         var ohRecovery = data.oh && data.oh.recovery ? data.oh.recovery : 0;
+        var ohReload = data.oh && data.oh.reload ? data.oh.reload : 0;
         
         var maxDuration = MAX_ACTION_DURATION;        
         $block.find('.mh-delay').width(GetPercStr(delay / maxDuration));
@@ -1084,14 +1089,17 @@
         $block.find('.oh-delay').width(GetPercStr(delay / maxDuration));
         $block.find('.oh-attack').width(GetPercStr(ohAttack / maxDuration));
         $block.find('.oh-recovery').width(GetPercStr(ohRecovery / maxDuration));
+        $block.find('.oh-reload').width(GetPercStr(ohReload / maxDuration));
         
         $block.find('.mh-attack-result .value').html(GetDisplayedPhaseDuration(mhAttack));
         $block.find('.mh-recovery-result .value').html(GetDisplayedPhaseDuration(mhRecovery));
         $block.find('.mh-reload-result .value').html(GetDisplayedPhaseDuration(mhReload));
         $block.find('.oh-attack-result .value').html(GetDisplayedPhaseDuration(ohAttack));
         $block.find('.oh-recovery-result .value').html(GetDisplayedPhaseDuration(ohRecovery));
+        $block.find('.oh-reload-result .value').html(GetDisplayedPhaseDuration(ohReload));
         
         $block.find('.mh-reload-result').toggleClass('hidden', mhReload <= 0);
+        $block.find('.oh-reload-result').toggleClass('hidden', ohReload <= 0);
         $block.find('.oh-delay').toggleClass('hidden', !IS_OFFHAND_ATTACKING);
         $block.find('.oh-attack-result').toggleClass('hidden', !IS_OFFHAND_ATTACKING);
         $block.find('.oh-recovery-result').toggleClass('hidden', !IS_OFFHAND_ATTACKING);
@@ -1353,7 +1361,8 @@
         total+= data.mh && data.mh.recovery ? data.mh.recovery : 0;
         total+= data.mh && data.mh.reload ? data.mh.reload : 0;        
         total+= data.oh && data.oh.attack ? data.oh.attack : 0;
-        total+= data.oh && data.oh.attack ? data.oh.recovery : 0;
+        total+= data.oh && data.oh.recovery ? data.oh.recovery : 0;
+        total+= data.oh && data.oh.reload ? data.oh.reload : 0;
         
         total/= dexCoef;
         total+= delay;
