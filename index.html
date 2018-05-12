@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Deadfire Beta Speed Calculator</title>
+    <title>Deadfire Beta4 Speed Calculator</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=3">
     <meta name="description" content="Online tool for calculation of attack speed and recovery duration."/>
@@ -10,10 +10,10 @@
     <link rel="author" href="https://www.reddit.com/user/MaxQuest/">
     <link rel="publisher" href="https://www.reddit.com/user/MaxQuest/">
     <meta property='og:locale' content='en_US'>
-    <meta property='og:title' content='Deadfire Beta Speed Calculator'>
+    <meta property='og:title' content='Deadfire Beta4 Speed Calculator'>
     <meta property='og:description' content='Online tool for calculation of attack speed and recovery duration.'>
     <meta property='og:url' content='https://naijaro.github.io/deadfire-beta-speed-calculator'>
-    <meta property='og:site_name' content='POE: Deadfire Speed Calculator'>
+    <meta property='og:site_name' content='POE: Deadfire Beta4 Speed Calculator'>
     <meta property='og:image' content='http://d1079ywfijtdjs.cloudfront.net/eternity/media/wallpapers/logo/pe-wallpaper-logo-936x526.jpg'>
     
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/slate/bootstrap.min.css">
@@ -284,8 +284,8 @@
       </div>
     </div>
     <div class="container">
-      <h1 id="page-title">Speed Calculator - for Deadfire Beta 3</h1>
-      <p id="page-info">version 0.0.3 (beta) <a class="text-muted" href="https://forums.obsidian.net/user/160416-maxquest/">by MaxQuest</a></p>     
+      <h1 id="page-title">Speed Calculator - for Deadfire Beta 4</h1>
+      <p id="page-info">version 0.0.4 (beta) <a class="text-muted" href="https://forums.obsidian.net/user/160416-maxquest/">by MaxQuest</a></p>     
       <form class="form-horizontal" id="main-form">
         <div class="row">
           <div class="col-lg-6 col-md-6 col-xs-12" id="equipment-block">
@@ -522,13 +522,13 @@
         GenWieldable(WIELDABLE_CATEGORIES.twoHandedMelee, ATTACK_DURATION_MD, RECOVERY_DURATION_MD, 0, "Pollaxe"),
         GenWieldable(WIELDABLE_CATEGORIES.twoHandedMelee, ATTACK_DURATION_MD, RECOVERY_DURATION_MD, 0, "Quarterstaff"),
         
-        GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_MD, 0, 208, "Arbalest"),
-        GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_MD, 0, 219, "Arquebus"),
-        GenWieldable(WIELDABLE_CATEGORIES.oneHandedRanged, ATTACK_DURATION_MD, 0, 205, "Blunderbuss"),
-        GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_MD, 0, 183, "Crossbow", 90),
+        GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_MD, 0, 180, "Arbalest"),
+        GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_MD, 0, 204, "Arquebus"),
+        GenWieldable(WIELDABLE_CATEGORIES.oneHandedRanged, ATTACK_DURATION_MD, 0, 180, "Blunderbuss"),
+        GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_MD, 0, 150, "Crossbow", 90),
         GenWieldable(WIELDABLE_CATEGORIES.oneHandedRanged, ATTACK_DURATION_SM, RECOVERY_DURATION_SM, 0, "Fist (Long Pain)", FIST_LONG_PAIN_ID),
         GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_LG, RECOVERY_DURATION_MD, 0, "Hunting Bow"),
-        GenWieldable(WIELDABLE_CATEGORIES.oneHandedRanged, ATTACK_DURATION_XL, 0, 176, "Pistol"),
+        GenWieldable(WIELDABLE_CATEGORIES.oneHandedRanged, ATTACK_DURATION_XL, 0, 150, "Pistol"),
         GenWieldable(WIELDABLE_CATEGORIES.twoHandedRanged, ATTACK_DURATION_XL, RECOVERY_DURATION_MD, 0, "Rod"),
         GenWieldable(WIELDABLE_CATEGORIES.oneHandedRanged, ATTACK_DURATION_MD, RECOVERY_DURATION_MD, 0, "Sceptre"),
         GenWieldable(WIELDABLE_CATEGORIES.oneHandedRanged, ATTACK_DURATION_MD, RECOVERY_DURATION_SM, 0, "Wand"),
@@ -1091,12 +1091,12 @@
         $block.find('.oh-recovery').width(GetPercStr(ohRecovery / maxDuration));
         $block.find('.oh-reload').width(GetPercStr(ohReload / maxDuration));
         
-        $block.find('.mh-attack-result .value').html(GetDisplayedPhaseDuration(mhAttack));
-        $block.find('.mh-recovery-result .value').html(GetDisplayedPhaseDuration(mhRecovery));
-        $block.find('.mh-reload-result .value').html(GetDisplayedPhaseDuration(mhReload));
-        $block.find('.oh-attack-result .value').html(GetDisplayedPhaseDuration(ohAttack));
-        $block.find('.oh-recovery-result .value').html(GetDisplayedPhaseDuration(ohRecovery));
-        $block.find('.oh-reload-result .value').html(GetDisplayedPhaseDuration(ohReload));
+        PopulateSpeedResultValue($block.find('.mh-attack-result .value'), mhAttack);
+        PopulateSpeedResultValue($block.find('.mh-recovery-result .value'), mhRecovery);
+        PopulateSpeedResultValue($block.find('.mh-reload-result .value'), mhReload);
+        PopulateSpeedResultValue($block.find('.oh-attack-result .value'), ohAttack);
+        PopulateSpeedResultValue($block.find('.oh-recovery-result .value'), ohRecovery);
+        PopulateSpeedResultValue($block.find('.oh-reload-result .value'), ohReload);
         
         $block.find('.mh-reload-result').toggleClass('hidden', mhReload <= 0);
         $block.find('.oh-reload-result').toggleClass('hidden', ohReload <= 0);
@@ -1107,6 +1107,12 @@
         if (totalFrames == totalFramesPrev && !PREVENT_RESULTS_BLINKING)
           $block.find('.progress').animate({ opacity: 0.5 }, 250)
                                   .animate({ opacity: 1.0 }, 250);
+      }
+      
+      function PopulateSpeedResultValue($value, value)
+      {
+        $value.html(GetDisplayedPhaseDuration(value));
+        $value.attr('title', GetDisplayedPhaseDuration(value, 3));
       }
       
       function PopulateCmpResults(baseValues, finalValues)
@@ -1330,7 +1336,7 @@
                 
         AddStepMultiplier(hand, GetDexCoef(CURRENT_DEX));
         
-        if (phase == PHASE.recovery)
+        if (phase == PHASE.recovery || phase == PHASE.reload)
         {
           AddStepMultiplier(hand, ARMOR_SPEED_COEF);          
           if (IS_DW_SETUP)
@@ -1419,14 +1425,19 @@
         return (floatVal * 100) + '%';
       }
       
-      function GetRoundedValue(floatVal)
+      function GetRoundedValue(floatVal, zerosAfterComma)
       {
-        return Math.round(floatVal * 10) / 10;
+        var val = 10;
+        
+        if (typeof zerosAfterComma == 'number' && zerosAfterComma > 0)
+          val = Math.pow(10, zerosAfterComma);
+        
+        return Math.round(floatVal * val) / val;
       }
       
-      function GetDisplayedPhaseDuration(frames)
+      function GetDisplayedPhaseDuration(frames, zerosAfterComma)
       {
-        return GetRoundedValue(frames) + 'f' + ' (' + GetRoundedValue(frames/30) + 's)';
+        return GetRoundedValue(frames/30, zerosAfterComma) + 's';
       }
             
       /* ******************************************************************** */
