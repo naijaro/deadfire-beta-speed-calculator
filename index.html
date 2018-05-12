@@ -580,7 +580,7 @@
       var CURRENT_DEX = 10;
       var CURRENT_ALCHEMY = 0;
       var ARMOR_SPEED_COEF = 0;
-      var DW_SPEED_COEF = 1/0.7; // 0.5 in beta1 and beta2
+      var DW_SPEED_COEF = 1/0.7; // 0.5 in beta1 and beta2 // dual-wielding
       var RESULTS_PER_BLOCK = {};
       var PREVENT_RESULTS_BLINKING = false;
       
@@ -1258,10 +1258,13 @@
           var mhRecovery = MH_WIELDABLE.recoveryDuration;
               mhRecovery/= IS_DW_SETUP ? DW_SPEED_COEF : 1; 
           
+          var mhReload = MH_WIELDABLE.reloadDuration;
+              mhReload/= IS_DW_SETUP ? DW_SPEED_COEF : 1;
+          
           values.mh = {
             attack: MH_WIELDABLE.attackDuration,
             recovery: mhRecovery,
-            reload: MH_WIELDABLE.reloadDuration
+            reload: mhReload
           };
         }
         
@@ -1269,11 +1272,14 @@
         {
           var ohRecovery = OH_WIELDABLE.recoveryDuration;
               ohRecovery/= IS_DW_SETUP ? DW_SPEED_COEF : 1;
-              
+          
+          var ohReload = OH_WIELDABLE.reloadDuration;
+              ohReload/= IS_DW_SETUP ? DW_SPEED_COEF : 1;
+          
           values.oh = {
             attack: OH_WIELDABLE.attackDuration,
             recovery: ohRecovery,
-            reload: OH_WIELDABLE.reloadDuration
+            reload: ohReload
           };
         }
         
