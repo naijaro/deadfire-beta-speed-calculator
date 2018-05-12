@@ -602,12 +602,13 @@
         GenEffect(EFFECT_CATEGORIES.affectsRecovery, 0.50, "Modal: Sabres", EFFECT_WR.melee, "Sabre"), // Windmill Slash
         GenEffect(EFFECT_CATEGORIES.affectsRecovery, 0.50, "Modal: War Bows", EFFECT_WR.ranged, "War Bow"), // Overdraw
         GenEffect(EFFECT_CATEGORIES.affectsRecovery, 0.50, "Modal: War Hammers", EFFECT_WR.melee, "War Hammer"), // Piercing Blows
-        GenEffect(EFFECT_CATEGORIES.affectsRecovery, 1.20, "Sure-Handed Chant", EFFECT_WR.ranged, null, null, null, true),
-        GenEffect(EFFECT_CATEGORIES.affectsRecovery, 1.20, "Two-Weapon Style", EFFECT_WR.any, null, null, TWO_WEAPON_STYLE_ID),        
+        GenEffect(EFFECT_CATEGORIES.affectsRecovery, 1.25, "Sure-Handed Chant", EFFECT_WR.ranged, null, null, null, true),
+        GenEffect(EFFECT_CATEGORIES.affectsRecovery, 1.25, "Two-Weapon Style", EFFECT_WR.any, null, null, TWO_WEAPON_STYLE_ID),        
         
-        GenEffect(EFFECT_CATEGORIES.affectsReload, 1.20, "Acina's Tricorn", EFFECT_WR.ranged, null),
-        GenEffect(EFFECT_CATEGORIES.affectsReload, 2.00, "Modal: Pistols", EFFECT_WR.ranged, "Pistol"),
-        GenEffect(EFFECT_CATEGORIES.affectsReload, 1.20, "Sure-Handed Chant", EFFECT_WR.ranged, null, null, null, true)
+        GenEffect(EFFECT_CATEGORIES.affectsReload, 1.25, "Shootist (Acina's Tricorn)", EFFECT_WR.ranged, null),
+        GenEffect(EFFECT_CATEGORIES.affectsReload, 2.00, "Modal: Pistols", EFFECT_WR.ranged, "Pistol", SUPPRESING_CATEGORIES.reloadSpeedMult1),
+        GenEffect(EFFECT_CATEGORIES.affectsReload, 1.25, "Sure-Handed Chant", EFFECT_WR.ranged, null, SUPPRESING_CATEGORIES.reloadSpeedMult1, null, true),
+        GenEffect(EFFECT_CATEGORIES.affectsReload, 1.25, "Gunner", EFFECT_WR.ranged, null),
       ];
       
       var GLOVES_EFFECTS = {
@@ -1398,6 +1399,9 @@
           return true;
         
         if (effect.category == EFFECT_CATEGORIES.affectsRecovery && phase == PHASE.recovery)
+          return true;
+        
+        if (effect.category == EFFECT_CATEGORIES.affectsRecovery && phase == PHASE.reload)
           return true;
         
         if (effect.category == EFFECT_CATEGORIES.affectsReload && phase == PHASE.reload)
