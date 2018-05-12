@@ -4,8 +4,8 @@
     <title>Deadfire Beta4 Speed Calculator</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=3">
-    <meta name="description" content="Online tool for calculation of attack speed and recovery duration."/>
-    <meta name="keywords" content="attack speed,recovery duration,pillars of eternity,deadfire,calculator"/>
+    <meta name="description" content="Online tool for calculation of attack speed and recovery time."/>
+    <meta name="keywords" content="attack speed,recovery duration,recovery time,reload time,pillars of eternity,deadfire,calculator"/>
     
     <link rel="author" href="https://www.reddit.com/user/MaxQuest/">
     <link rel="publisher" href="https://www.reddit.com/user/MaxQuest/">
@@ -13,8 +13,8 @@
     <meta property='og:title' content='Deadfire Beta4 Speed Calculator'>
     <meta property='og:description' content='Online tool for calculation of attack speed and recovery duration.'>
     <meta property='og:url' content='https://naijaro.github.io/deadfire-beta-speed-calculator'>
-    <meta property='og:site_name' content='POE: Deadfire Beta4 Speed Calculator'>
-    <meta property='og:image' content='http://d1079ywfijtdjs.cloudfront.net/eternity/media/wallpapers/logo/pe-wallpaper-logo-936x526.jpg'>
+    <meta property='og:site_name' content='PoE II Deadfire - Beta4 - Speed Calculator'>
+    <meta property='og:image' content='https://d1079ywfijtdjs.cloudfront.net/deadfire/wallpapers/deadfire-logo-2560x1440.jpg'>
     
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/slate/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/9.2.0/nouislider.min.css">
@@ -388,8 +388,8 @@
                   </div>
                 </div>
                 <div class="col-lg-6 col-sm-6 col-xs-12">
-                  <div class="panel panel-default panel-effects" data-id="affectsRecovery">
-                    <div class="panel-heading">Affects Recovery <span class="badge badge-info-alt">&nbsp;</span></div>
+                  <div class="panel panel-default panel-effects" data-id="affectsRecoveryAndReload">
+                    <div class="panel-heading">Affects Recovery And Reload<span class="badge badge-info-alt">&nbsp;</span></div>
                     <div class="panel-body"></div>
                   </div>
                   <div class="panel panel-default panel-effects" data-id="affectsReload">
@@ -559,7 +559,7 @@
       };      
       var EFFECT_CATEGORIES = {
         affectsAllPhases: 'affectsAllPhases',
-        affectsRecovery: 'affectsRecovery',
+        affectsRecoveryAndReload: 'affectsRecoveryAndReload',
         affectsReload: 'affectsReload'
       };
       var EFFECT_WR = { // affected weapon range
@@ -595,20 +595,21 @@
         GenEffect(EFFECT_CATEGORIES.affectsAllPhases, 1.20, "Swift Strikes", EFFECT_WR.any, null, SUPPRESING_CATEGORIES.attackSpeedMult1),
         GenEffect(EFFECT_CATEGORIES.affectsAllPhases, 1.40, "Their Champion Chant", EFFECT_WR.any, null, SUPPRESING_CATEGORIES.attackSpeedMult1),
         
-        GenEffect(EFFECT_CATEGORIES.affectsRecovery, 0.50, "Modal: Battle Axes", EFFECT_WR.melee, "Battle Axe"), // Bleeding Cut
-        GenEffect(EFFECT_CATEGORIES.affectsRecovery, 2.00, "Modal: Hunting Bow", EFFECT_WR.ranged, "Hunting Bow"), // Rapid Shot
-        GenEffect(EFFECT_CATEGORIES.affectsRecovery, 0.50, "Modal: Quarterstaves", EFFECT_WR.melee, "Quarterstaff"), // Defensive Strike
-        GenEffect(EFFECT_CATEGORIES.affectsRecovery, 0.50, "Modal: Rapiers", EFFECT_WR.melee, "Rapier"), // Vulnerable Thrust        
-        GenEffect(EFFECT_CATEGORIES.affectsRecovery, 0.50, "Modal: Sabres", EFFECT_WR.melee, "Sabre"), // Windmill Slash
-        GenEffect(EFFECT_CATEGORIES.affectsRecovery, 0.50, "Modal: War Bows", EFFECT_WR.ranged, "War Bow"), // Overdraw
-        GenEffect(EFFECT_CATEGORIES.affectsRecovery, 0.50, "Modal: War Hammers", EFFECT_WR.melee, "War Hammer"), // Piercing Blows
-        GenEffect(EFFECT_CATEGORIES.affectsRecovery, 1.25, "Sure-Handed Chant", EFFECT_WR.ranged, null, null, null, true),
-        GenEffect(EFFECT_CATEGORIES.affectsRecovery, 1.25, "Two-Weapon Style", EFFECT_WR.any, null, null, TWO_WEAPON_STYLE_ID),        
+        GenEffect(EFFECT_CATEGORIES.affectsRecoveryAndReload, 0.50, "Modal: Battle Axes", EFFECT_WR.melee, "Battle Axe"), // Bleeding Cut
+        GenEffect(EFFECT_CATEGORIES.affectsRecoveryAndReload, 2.00, "Modal: Hunting Bow", EFFECT_WR.ranged, "Hunting Bow"), // Rapid Shot
+        GenEffect(EFFECT_CATEGORIES.affectsRecoveryAndReload, 0.50, "Modal: Quarterstaves", EFFECT_WR.melee, "Quarterstaff"), // Defensive Strike
+        GenEffect(EFFECT_CATEGORIES.affectsRecoveryAndReload, 0.50, "Modal: Rapiers", EFFECT_WR.melee, "Rapier"), // Vulnerable Thrust        
+        GenEffect(EFFECT_CATEGORIES.affectsRecoveryAndReload, 0.50, "Modal: Sabres", EFFECT_WR.melee, "Sabre"), // Windmill Slash
+        GenEffect(EFFECT_CATEGORIES.affectsRecoveryAndReload, 0.50, "Modal: War Bows", EFFECT_WR.ranged, "War Bow"), // Overdraw
+        GenEffect(EFFECT_CATEGORIES.affectsRecoveryAndReload, 0.50, "Modal: War Hammers", EFFECT_WR.melee, "War Hammer"), // Piercing Blows
+        GenEffect(EFFECT_CATEGORIES.affectsRecoveryAndReload, 1.25, "Sure-Handed Chant", EFFECT_WR.ranged, null, null, null, true),
+        GenEffect(EFFECT_CATEGORIES.affectsRecoveryAndReload, 1/0.80, "Two-Weapon Style", EFFECT_WR.any, null, null, TWO_WEAPON_STYLE_ID),        
+        GenEffect(EFFECT_CATEGORIES.affectsRecoveryAndReload, 1/0.15, "Stealth", EFFECT_WR.any),        
         
         GenEffect(EFFECT_CATEGORIES.affectsReload, 1.25, "Shootist (Acina's Tricorn)", EFFECT_WR.ranged, null),
-        GenEffect(EFFECT_CATEGORIES.affectsReload, 2.00, "Modal: Pistols", EFFECT_WR.ranged, "Pistol", SUPPRESING_CATEGORIES.reloadSpeedMult1),
-        GenEffect(EFFECT_CATEGORIES.affectsReload, 1.25, "Sure-Handed Chant", EFFECT_WR.ranged, null, SUPPRESING_CATEGORIES.reloadSpeedMult1, null, true),
-        GenEffect(EFFECT_CATEGORIES.affectsReload, 1.25, "Gunner", EFFECT_WR.ranged, null),
+        GenEffect(EFFECT_CATEGORIES.affectsReload, 2.00, "Modal: Pistols", EFFECT_WR.ranged, "Pistol", SUPPRESING_CATEGORIES.reloadSpeedCoef1),
+        GenEffect(EFFECT_CATEGORIES.affectsReload, 1.25, "Sure-Handed Chant", EFFECT_WR.ranged, null, SUPPRESING_CATEGORIES.reloadSpeedCoef1, null, true),
+        GenEffect(EFFECT_CATEGORIES.affectsReload, 1.25, "Gunner", EFFECT_WR.ranged, null)
       ];
       
       var GLOVES_EFFECTS = {
@@ -757,7 +758,7 @@
               lockPropagation = false;
             }
           }
-          
+          console.log('foo');
           if (effect.suppressingCategory)
             UpdateSuppression();
           
@@ -884,7 +885,10 @@
           VARS.EFFECT_ID++;
           effectId = VARS.EFFECT_ID;
         }
-              
+        
+        if (suppressingCategory)
+          console.log('tada', title);
+        
         return {
           id: effectId,
           title: title,
@@ -1022,7 +1026,7 @@
       function PopulateEffects()
       {
         PopulateEffectsPanel(EFFECT_CATEGORIES.affectsAllPhases);
-        PopulateEffectsPanel(EFFECT_CATEGORIES.affectsRecovery, 'info-alt');
+        PopulateEffectsPanel(EFFECT_CATEGORIES.affectsRecoveryAndReload, 'info-alt');
         PopulateEffectsPanel(EFFECT_CATEGORIES.affectsReload, 'info-alt');
       }
       
@@ -1186,7 +1190,7 @@
       function UpdateSuppression()
       {
         var $effectsBlock = $('#effects-block');
-        
+        console.log('UpdateSuppression');
         for (var i in SUPPRESING_CATEGORIES)
         {
           var suppressingCategory = SUPPRESING_CATEGORIES[i];
@@ -1204,7 +1208,7 @@
                 unsuppresedEffect = effect;              
             }
           }
-          
+          console.log('z', suppressingCategory, ENABLED_EFFECTS);
           for (var j in ENABLED_EFFECTS)
           {
             var effect = ENABLED_EFFECTS[j];
@@ -1398,10 +1402,10 @@
         if (effect.category == EFFECT_CATEGORIES.affectsAllPhases)
           return true;
         
-        if (effect.category == EFFECT_CATEGORIES.affectsRecovery && phase == PHASE.recovery)
+        if (effect.category == EFFECT_CATEGORIES.affectsRecoveryAndReload && phase == PHASE.recovery)
           return true;
         
-        if (effect.category == EFFECT_CATEGORIES.affectsRecovery && phase == PHASE.reload)
+        if (effect.category == EFFECT_CATEGORIES.affectsRecoveryAndReload && phase == PHASE.reload)
           return true;
         
         if (effect.category == EFFECT_CATEGORIES.affectsReload && phase == PHASE.reload)
